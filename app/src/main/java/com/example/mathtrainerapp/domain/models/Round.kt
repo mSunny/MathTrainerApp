@@ -38,9 +38,9 @@ class Round(private val roundTimer: RoundTimer,
         state = RoundState.FINISHED
     }
 
-    fun tryAnswer(input: String) {
+    fun tryAnswer(answer: String) {
         if (state != RoundState.STARTED) return
-        if (task.checkResult(input)) {
+        if (task.checkResult(answer)) {
             finishRound(true)
         } else {
             roundListener.onWrongAnswer()
