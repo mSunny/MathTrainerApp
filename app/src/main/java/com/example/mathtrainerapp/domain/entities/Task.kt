@@ -1,4 +1,4 @@
-package com.example.mathtrainerapp.domain.models
+package com.example.mathtrainerapp.domain.entities
 
 abstract class Task {
     abstract override fun toString(): String

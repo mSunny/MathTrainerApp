@@ -1,5 +1,7 @@
-package com.example.mathtrainerapp.domain.models
+package com.example.mathtrainerapp.domain.entities
+
 interface GameListener {
+    fun onRoundStarted(task: Task, timeLeft: Long)
     fun onTimeLeftUpdate(timeLeft: Long)
     fun onRoundFinished(isWon: Boolean, scoreAdded: Int)
     fun onWrongAnswer()
@@ -9,11 +11,11 @@ interface GameListener {
 class Game(gameDescription: GameDescription,
            private val gameListener: GameListener,
            private val tasks: List<Task>,
-           private val roundCreator: RoundCreator): RoundListener {
+           private val roundCreator: (RoundTimer, Int, Int, Task, RoundListener)-> Round,
+           private val timerCreator: (Long)-> RoundTimer): RoundListener {
     private val numberOfRounds: Int = tasks.size
     private val timerStep: Long = gameDescription.timerStep
-    private val roundDurationInSteps: Int =
-        (gameDescription.roundDurationMs / gameDescription.timerStep).toInt()
+    private val roundDurationInSteps: Int = gameDescription.roundDurationInSteps
     private val roundMaxScore: Int = gameDescription.roundMaxScore
     private var round: Round? = null
     private var gameState = GameState.BEFORE_START
@@ -34,8 +36,22 @@ class Game(gameDescription: GameDescription,
         }
     }
 
+    fun pause() {
+        round?.pause()
+    }
+
+    fun resume() {
+        round?.resume()
+    }
+
+    fun stop() {
+        round?.cancelRound()
+        finishGame()
+    }
+
     private fun getNextRound(): Round {
-        return roundCreator.createRound(RoundTimerImplementation(timerStep),
+        return roundCreator(
+            timerCreator(timerStep),
             roundDurationInSteps,
             roundMaxScore,
             tasks[currentRoundNumber],
@@ -45,6 +61,7 @@ class Game(gameDescription: GameDescription,
     private fun startNextRound() {
         round = getNextRound()
         round!!.startRound()
+        gameListener.onRoundStarted(round!!.task, round!!.stepsLeft * timerStep)
     }
 
     override fun onRoundFinished(isWon: Boolean, scoreAdded: Int) {
@@ -54,8 +71,7 @@ class Game(gameDescription: GameDescription,
         if (currentRoundNumber < numberOfRounds) {
             startNextRound()
         } else {
-            gameListener.onGameFinished(score)
-            gameState = GameState.FINISHED
+            finishGame()
         }
     }
 
@@ -65,5 +81,12 @@ class Game(gameDescription: GameDescription,
 
     override fun onWrongAnswer() {
         gameListener.onWrongAnswer()
+    }
+
+    private fun finishGame() {
+        if (gameState != GameState.FINISHED) {
+            gameListener.onGameFinished(score)
+            gameState = GameState.FINISHED
+        }
     }
 }

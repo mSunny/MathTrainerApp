@@ -1,4 +1,4 @@
-package com.example.mathtrainerapp.domain.models
+package com.example.mathtrainerapp.domain.entities
 
 interface RoundListener {
     fun onRoundFinished(isWon: Boolean, scoreAdded: Int)
@@ -9,10 +9,10 @@ interface RoundListener {
 class Round(private val roundTimer: RoundTimer,
             private val roundDurationInSteps: Int,
             private val roundMaxScore: Int,
-            private val task: Task,
+            val task: Task,
             private val roundListener: RoundListener) {
     enum class RoundState {BEFORE_START, STARTED, FINISHED}
-    private var stepsLeft = 0
+    var stepsLeft = 0
     private var state = RoundState.BEFORE_START
 
     fun startRound() {
@@ -45,6 +45,14 @@ class Round(private val roundTimer: RoundTimer,
         } else {
             roundListener.onWrongAnswer()
         }
+    }
+
+    fun pause() {
+        roundTimer.pause()
+    }
+
+    fun resume() {
+        roundTimer.resume()
     }
 
     private fun getCurrentScore(): Int {

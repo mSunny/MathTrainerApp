@@ -1,7 +1,8 @@
-package com.example.mathtrainerapp.domain.models
+package com.example.mathtrainerapp.domain.entities
 
 interface RoundTimer {
-    fun start()
+    fun pause()
+    fun resume()
     fun startRepeating()
     fun stop()
     fun addListener(roundTimerListener: RoundTimerListener)

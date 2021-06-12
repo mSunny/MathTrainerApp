@@ -1,5 +1,5 @@
 
-package com.example.mathtrainerapp.domain.models
+package com.example.mathtrainerapp.domain.entities
 
 import java.lang.IllegalArgumentException
 import kotlin.random.Random

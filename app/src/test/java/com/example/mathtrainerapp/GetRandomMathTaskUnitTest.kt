@@ -1,6 +1,6 @@
 package com.example.mathtrainerapp
 
-import com.example.mathtrainerapp.domain.models.*
+import com.example.mathtrainerapp.domain.entities.*
 import org.junit.Assert
 import org.junit.Test
 
