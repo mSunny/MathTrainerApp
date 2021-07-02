@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Math Trainer</string>
+    <string name="score">Счет</string>
+    <string name="back">Назад</string>
+    <string name="avatar">Аватар</string>
+    <string name="game_over">Игра окончена</string>
+    <string name="final_score">Счет: %d</string>
+    <string name="play_again">Еще раз</string>
+    <string name="title_activity_select_player">Выбор игрока</string>
+    <string name="select_player">Выбор игрока</string>
+    <string name="add_player">Новый игрок</string>
+    <string name="name">Имя</string>
+    <string name="enter_name">Введите имя игрока</string>
+    <string name="add">Добавить</string>
+    <string name="end_game">Закончить игру</string>
+    <string name="one">1</string>
+    <string name="two">2</string>
+    <string name="three">3</string>
+    <string name="four">4</string>
+    <string name="five">5</string>
+    <string name="six">6</string>
+    <string name="seven">7</string>
+    <string name="eight">8</string>
+    <string name="nine">9</string>
+    <string name="zero">0</string>
+    <string name="delete">удалить</string>
+    <string name="empty">пусто</string>
+</resources>

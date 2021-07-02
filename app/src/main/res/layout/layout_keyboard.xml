@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content" android:layout_height="wrap_content">
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <ImageButton
+            android:id="@+id/imageButton1"
+            style="@style/NumberButton"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/one"
+            android:contentDescription="@string/one"/>
+
+        <ImageButton
+            android:id="@+id/imageButton2"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/two"
+            style="@style/NumberButton"
+            android:contentDescription="@string/two"/>
+
+        <ImageButton
+            android:id="@+id/imageButton3"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/three"
+            style="@style/NumberButton"
+            android:contentDescription="@string/three"/>
+    </TableRow>
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <ImageButton
+            android:id="@+id/imageButton4"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/four"
+            style="@style/NumberButton"
+            android:contentDescription="@string/four"/>
+
+        <ImageButton
+            android:id="@+id/imageButton5"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/five"
+            style="@style/NumberButton"
+            android:contentDescription="@string/five"/>
+
+        <ImageButton
+            android:id="@+id/imageButton6"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/six"
+            style="@style/NumberButton"
+            android:contentDescription="@string/six"/>
+    </TableRow>
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <ImageButton
+            android:id="@+id/imageButton7"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/seven"
+            style="@style/NumberButton"
+            android:contentDescription="@string/seven"/>
+
+        <ImageButton
+            android:id="@+id/imageButton8"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/eight"
+            style="@style/NumberButton"
+            android:contentDescription="@string/eight"/>
+
+        <ImageButton
+            android:id="@+id/imageButton9"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/nine"
+            style="@style/NumberButton"
+            android:contentDescription="@string/nine"/>
+    </TableRow>
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <ImageButton
+            android:id="@+id/imageButton0"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/zero"
+            style="@style/NumberButton"
+            android:contentDescription="@string/zero"/>
+
+        <ImageButton
+            android:id="@+id/imageButtonMin"
+            android:layout_weight="1"
+            app:srcCompat="@null"
+            style="@style/NumberButton"
+            android:contentDescription="@string/empty"/>
+
+        <ImageButton
+            android:id="@+id/imageButtonDel"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/del"
+            style="@style/NumberButton"
+            android:contentDescription="@string/delete"/>
+    </TableRow>
+</TableLayout>

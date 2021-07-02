@@ -1,3 +1,28 @@
 <resources>
-    <string name="app_name">MathTrainerApp</string>
+    <string name="app_name">Math Trainer</string>
+    <string name="score">score</string>
+    <string name="back">back</string>
+    <string name="avatar">avatar</string>
+    <string name="game_over">Game Over</string>
+    <string name="final_score">Final score: %d</string>
+    <string name="play_again">Play again</string>
+    <string name="title_activity_select_player">SelectPlayerActivity</string>
+    <string name="select_player">Select player</string>
+    <string name="add_player">New player</string>
+    <string name="name">Name</string>
+    <string name="enter_name">Enter name</string>
+    <string name="add">Add</string>
+    <string name="end_game">End game</string>
+    <string name="one">1</string>
+    <string name="two">2</string>
+    <string name="three">3</string>
+    <string name="four">4</string>
+    <string name="five">5</string>
+    <string name="six">6</string>
+    <string name="seven">7</string>
+    <string name="eight">8</string>
+    <string name="nine">9</string>
+    <string name="zero">0</string>
+    <string name="delete">delete</string>
+    <string name="empty">empty</string>
 </resources>
