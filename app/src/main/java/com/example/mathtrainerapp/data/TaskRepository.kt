@@ -1,10 +1,11 @@
 package com.example.mathtrainerapp.data
 
+import com.example.mathtrainerapp.domain.boundaries.TaskRepositoryInterface
 import com.example.mathtrainerapp.domain.entities.MathTask
 import com.example.mathtrainerapp.domain.entities.Task
 
-class TaskRepository {
-        fun getTasks(tasksNumber: Int): List<Task> {
+class TaskRepository: TaskRepositoryInterface {
+        override fun getTasks(tasksNumber: Int): List<Task> {
             val res = mutableListOf<Task>()
             for(i in 1..tasksNumber) {
                 res.add(getTask())

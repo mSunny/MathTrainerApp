@@ -22,11 +22,11 @@ import java.util.*
 5. save new data
 6. show new data
  */
-class GameInteractorOnTimeLeftUpdate(timeLeft: Long): InteractorEvent()
-class GameInteractorOnRoundStarted(task: Task, timeLeft: Long): InteractorEvent()
-class GameInteractorOnRoundFinished(isWon: Boolean, scoreAdded: Int): InteractorEvent()
+class GameInteractorOnTimeLeftUpdate(val timeLeft: Long): InteractorEvent()
+class GameInteractorOnRoundStarted(val task: Task, val timeLeft: Long): InteractorEvent()
+class GameInteractorOnRoundFinished(val isWon: Boolean, val scoreAdded: Int): InteractorEvent()
 class GameInteractorOnWrongAnswer(): InteractorEvent()
-class GameInteractorOnGameFinished(score: Int): InteractorEvent()
+class GameInteractorOnGameFinished(val score: Int): InteractorEvent()
 
 class GameInteractor(private val player: Player,
                      private val taskRepository: TaskRepositoryInterface,
@@ -68,7 +68,7 @@ class GameInteractor(private val player: Player,
                 ::RoundTimerImplementation)
             game?.startGame()
             awaitClose { game?.stop() }
-        }.catch{e -> emit(InteractorEventError(Error(ErrorType.UNKNOWN, e.toString()?: "")))}
+        }.catch{e -> emit(InteractorEventError(Error(ErrorType.UNKNOWN, e.toString())))}
             .flowOn(Dispatchers.IO)
     }
 
