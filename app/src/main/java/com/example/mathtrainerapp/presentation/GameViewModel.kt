@@ -1,10 +1,9 @@
 package com.example.mathtrainerapp.presentation
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mathtrainerapp.data.GameRepository
-import com.example.mathtrainerapp.data.TaskRepository
+import com.example.mathtrainerapp.domain.boundaries.GameRepositoryInterface
+import com.example.mathtrainerapp.domain.boundaries.TaskRepositoryInterface
 import com.example.mathtrainerapp.domain.entities.Player
 import com.example.mathtrainerapp.domain.entities.Task
 import com.example.mathtrainerapp.domain.interactors.*
@@ -14,7 +13,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class GameViewModel(application: Application, playerId: String): AndroidViewModel(application) {
+class GameViewModel(playerId: String,
+                    private val taskRepository: TaskRepositoryInterface,
+                    private val gameRepository: GameRepositoryInterface): ViewModel() {
     enum class EventsToShow {NONE, ROUND_LOST, ROUND_WON, WRONG_ANSWER, GAME_FINISHED, ERROR}
     private var player: Player
     private lateinit var gameInteractor: GameInteractor
@@ -39,7 +40,7 @@ class GameViewModel(application: Application, playerId: String): AndroidViewMode
             roundScore = 0
             scoreFlow.value = roundScore
             viewModelScope.launch {
-                gameInteractor = GameInteractor(player, TaskRepository(), GameRepository())
+                gameInteractor = GameInteractor(player, taskRepository, gameRepository)
                 gameInteractor.start()
                     .collect {
                         if (it is InteractorEventError) {

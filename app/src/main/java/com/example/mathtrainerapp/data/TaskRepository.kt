@@ -3,8 +3,9 @@ package com.example.mathtrainerapp.data
 import com.example.mathtrainerapp.domain.boundaries.TaskRepositoryInterface
 import com.example.mathtrainerapp.domain.entities.MathTask
 import com.example.mathtrainerapp.domain.entities.Task
+import javax.inject.Inject
 
-class TaskRepository: TaskRepositoryInterface {
+class TaskRepository @Inject constructor(): TaskRepositoryInterface {
         override fun getTasks(tasksNumber: Int): List<Task> {
             val res = mutableListOf<Task>()
             for(i in 1..tasksNumber) {
