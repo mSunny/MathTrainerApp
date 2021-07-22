@@ -10,24 +10,19 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.mathtrainerapp.R
-import com.example.mathtrainerapp.appComponent
 import com.example.mathtrainerapp.data.GameParameters
 import com.example.mathtrainerapp.databinding.ActivityGameBinding
 import com.example.mathtrainerapp.domain.entities.Task
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class GameActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityGameBinding
-    private val gameViewModel: GameViewModel by viewModels{
-        factory.create(playerId ?: "")
-    }
-    private var playerId: String? = null
-
-    @Inject
-    lateinit var factory: GameViewModelFactory.Factory
+    private val gameViewModel: GameViewModel by viewModels()
 
     @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +30,6 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
         binding = ActivityGameBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        appComponent.injectGameActivity(this)
 
         arrayOf (binding.keyboard.imageButton0,
             binding.keyboard.imageButton1,

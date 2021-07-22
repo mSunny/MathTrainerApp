@@ -7,15 +7,17 @@ import com.example.mathtrainerapp.domain.boundaries.TaskRepositoryInterface
 import com.example.mathtrainerapp.domain.entities.Player
 import com.example.mathtrainerapp.domain.entities.Task
 import com.example.mathtrainerapp.domain.interactors.*
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class GameViewModel(playerId: String,
-                    private val taskRepository: TaskRepositoryInterface,
-                    private val gameRepository: GameRepositoryInterface): ViewModel() {
+@HiltViewModel
+class GameViewModel @Inject constructor(private val taskRepository: TaskRepositoryInterface,
+                                        private val gameRepository: GameRepositoryInterface): ViewModel() {
     enum class EventsToShow {NONE, ROUND_LOST, ROUND_WON, WRONG_ANSWER, GAME_FINISHED, ERROR}
     private var player: Player
     private lateinit var gameInteractor: GameInteractor
@@ -28,6 +30,7 @@ class GameViewModel(playerId: String,
     var roundScore = 0
 
     init {
+        val playerId = "" //TODO: temporary fix, till SavedStateHandle implementation
         player = Player(playerId, "", "")
     }
 
