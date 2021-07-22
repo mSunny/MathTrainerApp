@@ -30,6 +30,7 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
         binding = ActivityGameBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        gameViewModel.playerId = "123" //TODO: will be replaced with value from intent
 
         arrayOf (binding.keyboard.imageButton0,
             binding.keyboard.imageButton1,

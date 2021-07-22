@@ -1,5 +1,6 @@
 package com.example.mathtrainerapp.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mathtrainerapp.domain.boundaries.GameRepositoryInterface
@@ -19,7 +20,7 @@ import javax.inject.Inject
 class GameViewModel @Inject constructor(private val taskRepository: TaskRepositoryInterface,
                                         private val gameRepository: GameRepositoryInterface): ViewModel() {
     enum class EventsToShow {NONE, ROUND_LOST, ROUND_WON, WRONG_ANSWER, GAME_FINISHED, ERROR}
-    private var player: Player
+    private lateinit var player: Player
     private lateinit var gameInteractor: GameInteractor
     val timerValueFlow = MutableStateFlow(0L)
     val eventsToShowFlow: MutableSharedFlow<Pair<EventsToShow, Any?>> =
@@ -28,11 +29,10 @@ class GameViewModel @Inject constructor(private val taskRepository: TaskReposito
     val taskFlow: MutableStateFlow<Task?> = MutableStateFlow(null)
     var isStarted = false
     var roundScore = 0
-
-    init {
-        val playerId = "" //TODO: temporary fix, till SavedStateHandle implementation
-        player = Player(playerId, "", "")
-    }
+    var playerId: String = ""
+        set(playerId: String) {
+            player = Player(playerId, "", "")
+        }
 
     @ExperimentalCoroutinesApi
     fun startOrResume() {
