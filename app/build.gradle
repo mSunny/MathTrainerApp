@@ -56,4 +56,5 @@ dependencies {
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     implementation 'com.github.anrwatchdog:anrwatchdog:1.4.0'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 }
