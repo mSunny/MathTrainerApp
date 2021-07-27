@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.example.mathtrainerapp.dagger.AppComponent
 import com.example.mathtrainerapp.dagger.DaggerAppComponent
+import com.github.anrwatchdog.ANRWatchDog
 
 class App: Application() {
     lateinit var appComponent: AppComponent
@@ -12,6 +13,7 @@ class App: Application() {
     override fun onCreate() {
         super.onCreate()
         appComponent = DaggerAppComponent.create()
+        ANRWatchDog().start()
     }
 }
 
