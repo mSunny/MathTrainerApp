@@ -5,6 +5,7 @@ import com.example.mathtrainerapp.domain.boundaries.GameRepositoryInterface
 import com.example.mathtrainerapp.domain.boundaries.TaskRepositoryInterface
 import com.example.mathtrainerapp.domain.entities.*
 import com.example.mathtrainerapp.presentation.RoundTimerImplementation
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 import java.util.*
 
 /*
@@ -73,19 +75,27 @@ class GameInteractor(private val player: Player,
     }
 
     fun tryAnswer(answer: String) {
-        game?.tryAnswer(answer)
+        CoroutineScope(Dispatchers.IO).launch {
+            game?.tryAnswer(answer)
+        }
     }
 
     override fun stop() {
-        game?.stop()
+        CoroutineScope(Dispatchers.IO).launch {
+            game?.stop()
+        }
     }
 
     override fun pause() {
-        game?.pause()
+        CoroutineScope(Dispatchers.IO).launch {
+            game?.pause()
+        }
     }
 
     override fun resume() {
-        game?.resume()
+        CoroutineScope(Dispatchers.IO).launch {
+            game?.resume()
+        }
     }
 }
 
