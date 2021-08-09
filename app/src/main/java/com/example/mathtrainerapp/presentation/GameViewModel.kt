@@ -17,15 +17,15 @@ class GameViewModel(playerId: String,
                     private val taskRepository: TaskRepositoryInterface,
                     private val gameRepository: GameRepositoryInterface): ViewModel() {
     enum class EventsToShow {NONE, ROUND_LOST, ROUND_WON, WRONG_ANSWER, GAME_FINISHED, ERROR}
-    private var player: Player
-    private lateinit var gameInteractor: GameInteractor
     val timerValueFlow = MutableStateFlow(0L)
     val eventsToShowFlow: MutableSharedFlow<Pair<EventsToShow, Any?>> =
         MutableSharedFlow(0, 0)
     val scoreFlow= MutableStateFlow(0)
     val taskFlow: MutableStateFlow<Task?> = MutableStateFlow(null)
-    var isStarted = false
-    var roundScore = 0
+    private var player: Player
+    private lateinit var gameInteractor: GameInteractor
+    private var isStarted = false
+    private var roundScore = 0
 
     init {
         player = Player(playerId, "", "")
@@ -43,29 +43,32 @@ class GameViewModel(playerId: String,
                 gameInteractor = GameInteractor(player, taskRepository, gameRepository)
                 gameInteractor.start()
                     .collect {
-                        if (it is InteractorEventError) {
-                            eventsToShowFlow.emit(EventsToShow.ERROR to it.error.description)
-                        } else if (it is GameInteractorOnTimeLeftUpdate) {
-                            timerValueFlow.value = it.timeLeft
-                        } else if (it is GameInteractorOnRoundStarted) {
-                            timerValueFlow.value = it.timeLeft
-                            taskFlow.value = it.task
-                        } else if (it is GameInteractorOnRoundFinished) {
-                            timerValueFlow.value = 0
-                            roundScore = roundScore + it.scoreAdded
-                            scoreFlow.value = roundScore
-                            if (it.isWon) {
-                                eventsToShowFlow.emit(EventsToShow.ROUND_WON to null)
-                            } else {
-                                eventsToShowFlow.emit(EventsToShow.ROUND_LOST to null)
+                        when(it) {
+                            is InteractorEventError -> eventsToShowFlow.emit(EventsToShow.ERROR to it.error.description)
+                            is GameInteractorOnTimeLeftUpdate -> timerValueFlow.value = it.timeLeft
+                            is GameInteractorOnRoundStarted -> {
+                                timerValueFlow.value = it.timeLeft
+                                taskFlow.value = it.task
                             }
-                        } else if (it is GameInteractorOnWrongAnswer) {
-                            eventsToShowFlow.emit(EventsToShow.WRONG_ANSWER to null)
-                        } else if (it is GameInteractorOnGameFinished) {
-                            taskFlow.value = null
-                            scoreFlow.value = it.score
-                            eventsToShowFlow.emit(EventsToShow.GAME_FINISHED to it.score)
-                            isStarted = false
+                            is GameInteractorOnRoundFinished -> {
+                                timerValueFlow.value = 0
+                                roundScore += it.scoreAdded
+                                scoreFlow.value = roundScore
+                                if (it.isWon) {
+                                    eventsToShowFlow.emit(EventsToShow.ROUND_WON to null)
+                                } else {
+                                    eventsToShowFlow.emit(EventsToShow.ROUND_LOST to null)
+                                }
+                            }
+                            is GameInteractorOnWrongAnswer -> {
+                                eventsToShowFlow.emit(EventsToShow.WRONG_ANSWER to null)
+                            }
+                            is GameInteractorOnGameFinished -> {
+                                taskFlow.value = null
+                                scoreFlow.value = it.score
+                                eventsToShowFlow.emit(EventsToShow.GAME_FINISHED to it.score)
+                                isStarted = false
+                            }
                         }
                     }
             }
