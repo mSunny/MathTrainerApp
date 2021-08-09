@@ -63,9 +63,9 @@ class GameInteractor(private val player: Player,
 
             }
             game = Game(
-                GameParameters.gameDescription,
+                GameParameters.GAME_DESCRIPTION,
                 callback,
-                taskRepository.getTasks(GameParameters.numberOfTasks),
+                taskRepository.getTasks(GameParameters.NUMBER_OF_TASKS),
                 ::Round,
                 ::RoundTimerImplementation)
             game?.startGame()

@@ -66,7 +66,7 @@ class GameInteractorTest {
                 }
             }
 
-            verify(taskRepository).getTasks(GameParameters.numberOfTasks)
+            verify(taskRepository).getTasks(GameParameters.NUMBER_OF_TASKS)
             verify(gameRepository).saveGameResult(eq("123"), any(), any())
 
             Assert.assertEquals(5, res.filterIsInstance<GameInteractorOnRoundFinished>().count())
@@ -97,7 +97,7 @@ class GameInteractorTest {
                 }
             }
 
-            verify(taskRepository).getTasks(GameParameters.numberOfTasks)
+            verify(taskRepository).getTasks(GameParameters.NUMBER_OF_TASKS)
             verify(gameRepository).saveGameResult(eq("123"), any(), any())
 
             Assert.assertEquals(1, res.filterIsInstance<GameInteractorOnRoundFinished>().count())
@@ -136,7 +136,7 @@ class GameInteractorTest {
                 count++
             }
 
-            verify(taskRepository).getTasks(GameParameters.numberOfTasks)
+            verify(taskRepository).getTasks(GameParameters.NUMBER_OF_TASKS)
             verify(gameRepository).saveGameResult(eq("123"), any(), any())
 
             Assert.assertEquals(5, res.filterIsInstance<GameInteractorOnRoundFinished>().count())
