@@ -40,23 +40,23 @@ class GameInteractor(private val player: Player,
         return callbackFlow<InteractorEvent> {
             val callback = object: GameListener {
                 override fun onRoundStarted(task: Task, timeLeft: Long) {
-                    offer(GameInteractorOnRoundStarted(task, timeLeft))
+                    trySend(GameInteractorOnRoundStarted(task, timeLeft))
                 }
 
                 override fun onTimeLeftUpdate(timeLeft: Long) {
-                    offer(GameInteractorOnTimeLeftUpdate(timeLeft))
+                    trySend(GameInteractorOnTimeLeftUpdate(timeLeft))
                 }
 
                 override fun onRoundFinished(isWon: Boolean, scoreAdded: Int) {
-                    offer(GameInteractorOnRoundFinished(isWon, scoreAdded))
+                    trySend(GameInteractorOnRoundFinished(isWon, scoreAdded))
                 }
 
                 override fun onWrongAnswer() {
-                    offer(GameInteractorOnWrongAnswer())
+                    trySend(GameInteractorOnWrongAnswer())
                 }
 
                 override fun onGameFinished(score: Int) {
-                    offer(GameInteractorOnGameFinished(score))
+                    trySend(GameInteractorOnGameFinished(score))
                     gameRepository.saveGameResult(player.id, Date(), score)
                     close()
                 }
