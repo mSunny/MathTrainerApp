@@ -4,7 +4,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
-android:background="@color/colorPrimary"
+android:background="@color/primary"
 tools:context=".presentation.GameActivity">
 
 <ImageButton
@@ -22,7 +22,7 @@ tools:context=".presentation.GameActivity">
     android:layout_height="wrap_content"
     android:text="@string/score"
     android:textSize="@dimen/medium_text_size"
-    android:textColor="@color/colorAccent"
+    android:textColor="@color/accent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     tools:text="1000"/>
@@ -47,7 +47,7 @@ tools:context=".presentation.GameActivity">
     app:layout_constraintHorizontal_bias="0.5"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/imageViewAvatar"
-    android:textColor="@color/colorAccent"
+    android:textColor="@color/accent"
     tools:text="Миша"/>
 
 <ProgressBar
@@ -73,7 +73,7 @@ tools:context=".presentation.GameActivity">
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintHorizontal_bias="0.5"
     app:layout_constraintStart_toStartOf="parent"
-    android:textColor="@color/colorAccent"
+    android:textColor="@color/accent"
     tools:text="2+2" />
 
 <EditText
@@ -83,12 +83,12 @@ tools:context=".presentation.GameActivity">
     android:ems="@dimen/edit_text_ems"
     android:textSize="@dimen/medium_text_size"
     android:inputType="number"
-    android:textColor="@color/colorAccent"
+    android:textColor="@color/accent"
     android:textAlignment="center"
     android:gravity="center_horizontal"
     android:layout_marginStart="@dimen/base_margin"
     android:layout_marginEnd="@dimen/base_margin"
-    android:backgroundTint="@color/colorAccent"
+    android:backgroundTint="@color/accent"
     app:layout_constraintBottom_toTopOf="@+id/keyboard"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintHorizontal_bias="0.5"
