@@ -1,12 +1,13 @@
 package com.example.mathtrainerapp.domain.interactors
 
+import com.example.mathtrainerapp.dagger.DaggerGameInteractorComponent
+import com.example.mathtrainerapp.dagger.GameInteractorComponent
 import com.example.mathtrainerapp.data.GameParameters
 import com.example.mathtrainerapp.domain.boundaries.GameRepositoryInterface
 import com.example.mathtrainerapp.domain.boundaries.TaskRepositoryInterface
 import com.example.mathtrainerapp.domain.entities.*
-import com.example.mathtrainerapp.presentation.RoundTimerImplementation
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 
 /*
 1. start game for player
@@ -30,10 +32,25 @@ class GameInteractorOnRoundFinished(val isWon: Boolean, val scoreAdded: Int): In
 class GameInteractorOnWrongAnswer(): InteractorEvent()
 class GameInteractorOnGameFinished(val score: Int): InteractorEvent()
 
-class GameInteractor(private val player: Player,
-                     private val taskRepository: TaskRepositoryInterface,
-                     private val gameRepository: GameRepositoryInterface): Interactor() {
-    var game: Game? = null
+class GameInteractor (private var dispatcher: CoroutineDispatcher,
+                      private val taskRepository: TaskRepositoryInterface,
+                      private val gameRepository: GameRepositoryInterface): Interactor() {
+    var gameInteractorComponent: GameInteractorComponent
+        private set
+
+    @Inject
+    lateinit var gameProcessor: GameProcessor
+    lateinit var player: Player
+
+    init {
+        gameInteractorComponent = DaggerGameInteractorComponent.create()
+        gameInteractorComponent.injectGameInteractor(this)
+    }
+
+    fun initInteractor(player: Player): GameInteractor {
+        this.player = player
+        return this
+    }
 
     @ExperimentalCoroutinesApi
     override fun start(): Flow<InteractorEvent> {
@@ -62,39 +79,35 @@ class GameInteractor(private val player: Player,
                 }
 
             }
-            game = Game(
+            gameProcessor.startNewGame(Game(
                 GameParameters.GAME_DESCRIPTION,
-                callback,
-                taskRepository.getTasks(GameParameters.NUMBER_OF_TASKS),
-                ::Round,
-                ::RoundTimerImplementation)
-            game?.startGame()
-            awaitClose { game?.stop() }
+                taskRepository.getTasks(GameParameters.NUMBER_OF_TASKS)), callback)
+            awaitClose { gameProcessor.stop() }
         }.catch{e -> emit(InteractorEventError(Error(ErrorType.UNKNOWN, e.toString())))}
-            .flowOn(Dispatchers.IO)
+            .flowOn(dispatcher)
     }
 
     fun tryAnswer(answer: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            game?.tryAnswer(answer)
+        CoroutineScope(dispatcher).launch {
+            gameProcessor.tryAnswer(answer)
         }
     }
 
     override fun stop() {
-        CoroutineScope(Dispatchers.IO).launch {
-            game?.stop()
+        CoroutineScope(dispatcher).launch {
+            gameProcessor.stop()
         }
     }
 
     override fun pause() {
-        CoroutineScope(Dispatchers.IO).launch {
-            game?.pause()
+        CoroutineScope(dispatcher).launch {
+            gameProcessor.pause()
         }
     }
 
     override fun resume() {
-        CoroutineScope(Dispatchers.IO).launch {
-            game?.resume()
+        CoroutineScope(dispatcher).launch {
+            gameProcessor.resume()
         }
     }
 }

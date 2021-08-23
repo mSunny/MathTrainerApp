@@ -149,6 +149,7 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
         binding.progressBarTime.max = (GameParameters.DEFAULT_ROUND_DURATION_IN_STEPS * GameParameters.DEFAULT_TIMER_STEP_MS).toInt()
     }
 
+    @ExperimentalCoroutinesApi
     private fun initEventProcessing() {
         runInLifecycleScope {
             gameViewModel.timerValueFlow.collect {
