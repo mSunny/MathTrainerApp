@@ -124,7 +124,10 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
 
     @ExperimentalCoroutinesApi
     fun startGame() {
-        gameViewModel.startOrResume()
+        when(gameViewModel.gameState) {
+            GameViewModel.GameViewSTate.GAME_STARTED, GameViewModel.GameViewSTate.GAME_NOT_STARTED -> gameViewModel.startOrResume()
+            GameViewModel.GameViewSTate.GAME_FINISHED -> signalGameFinished(gameViewModel.gameScore)
+        }
     }
 
     private fun initViews() {
