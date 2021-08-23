@@ -3,12 +3,9 @@ package com.example.mathtrainerapp.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mathtrainerapp.dagger.DaggerGameComponent
-import com.example.mathtrainerapp.domain.boundaries.GameRepositoryInterface
-import com.example.mathtrainerapp.domain.boundaries.TaskRepositoryInterface
 import com.example.mathtrainerapp.domain.entities.Player
 import com.example.mathtrainerapp.domain.entities.Task
 import com.example.mathtrainerapp.domain.interactors.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,17 +17,16 @@ class GameViewModel (playerId: String): ViewModel() {
     enum class EventsToShow {NONE, ROUND_LOST, ROUND_WON, WRONG_ANSWER, GAME_FINISHED, ERROR}
     enum class GameViewSTate {GAME_STARTED, GAME_FINISHED, GAME_NOT_STARTED}
 
-    private var player: Player
-    @Inject
-    lateinit var gameInteractor: GameInteractor
     var gameState = GameViewSTate.GAME_NOT_STARTED
     var gameScore = 0
-
     val timerValueFlow = MutableStateFlow(0L)
     val eventsToShowFlow: MutableSharedFlow<Pair<EventsToShow, Any?>> =
         MutableSharedFlow(0, 0)
     val scoreFlow= MutableStateFlow(0)
     val taskFlow: MutableStateFlow<Task?> = MutableStateFlow(null)
+    private var player: Player
+    @Inject
+    lateinit var gameInteractor: GameInteractor
 
     init {
         val gameComponent = DaggerGameComponent.create()
@@ -47,7 +43,7 @@ class GameViewModel (playerId: String): ViewModel() {
     }
 
     @ExperimentalCoroutinesApi
-    private fun startGame() {
+    fun startGame() {
         gameState = GameViewSTate.GAME_STARTED
         gameScore = 0
         scoreFlow.value = gameScore

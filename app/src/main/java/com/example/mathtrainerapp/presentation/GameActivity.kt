@@ -40,7 +40,7 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
     @ExperimentalCoroutinesApi
     override fun onStart() {
         super.onStart()
-        startGame()
+        restoreGame()
     }
 
     override fun onStop() {
@@ -123,11 +123,16 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     @ExperimentalCoroutinesApi
-    fun startGame() {
+    fun restoreGame() {
         when(gameViewModel.gameState) {
             GameViewModel.GameViewSTate.GAME_STARTED, GameViewModel.GameViewSTate.GAME_NOT_STARTED -> gameViewModel.startOrResume()
             GameViewModel.GameViewSTate.GAME_FINISHED -> signalGameFinished(gameViewModel.gameScore)
         }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun startGame() {
+        gameViewModel.startGame()
     }
 
     private fun initViews() {
