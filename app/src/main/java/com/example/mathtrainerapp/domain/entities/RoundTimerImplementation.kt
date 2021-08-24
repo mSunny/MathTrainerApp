@@ -1,6 +1,5 @@
-package com.example.mathtrainerapp.presentation
+package com.example.mathtrainerapp.domain.entities
 
-import com.example.mathtrainerapp.domain.entities.RoundTimer
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 

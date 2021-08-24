@@ -1,28 +1,30 @@
 package com.example.mathtrainerapp.presentation
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mathtrainerapp.dagger.DaggerGameComponent
-import com.example.mathtrainerapp.domain.boundaries.GameRepositoryInterface
-import com.example.mathtrainerapp.domain.boundaries.TaskRepositoryInterface
+import com.example.mathtrainerapp.App
+import com.example.mathtrainerapp.dagger.GameComponent
+import com.example.mathtrainerapp.dagger.PlayerModule
 import com.example.mathtrainerapp.domain.entities.Player
 import com.example.mathtrainerapp.domain.entities.Task
 import com.example.mathtrainerapp.domain.interactors.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class GameViewModel (playerId: String,
-                     private val taskRepository: TaskRepositoryInterface,
-                     private val gameRepository: GameRepositoryInterface): ViewModel() {
+class GameViewModel(playerId: String, application: Application) : AndroidViewModel(application) {
     enum class EventsToShow {NONE, ROUND_LOST, ROUND_WON, WRONG_ANSWER, GAME_FINISHED, ERROR}
     enum class GameViewSTate {GAME_STARTED, GAME_FINISHED, GAME_NOT_STARTED}
 
-    private var player: Player
+    private var gameComponent: GameComponent
+    @Inject
     lateinit var gameInteractor: GameInteractor
+
+    var player = Player(playerId, "", "")
     var gameState = GameViewSTate.GAME_NOT_STARTED
     var gameScore = 0
 
@@ -32,12 +34,6 @@ class GameViewModel (playerId: String,
     val scoreFlow= MutableStateFlow(0)
     val taskFlow: MutableStateFlow<Task?> = MutableStateFlow(null)
 
-    init {
-        val gameComponent = DaggerGameComponent.create()
-        gameComponent.injectGameViewModel(this)
-        player = Player(playerId, "", "")
-    }
-
     @ExperimentalCoroutinesApi
     fun startOrResume() {
         when(gameState) {
@@ -46,14 +42,18 @@ class GameViewModel (playerId: String,
         }
     }
 
+    init {
+        gameComponent = (application as App).createGameComponent(PlayerModule(player = player))
+        gameComponent.injectGameViewModel(this)
+    }
+
     @ExperimentalCoroutinesApi
-    private fun startGame() {
+    fun startGame() {
         gameState = GameViewSTate.GAME_STARTED
         gameScore = 0
         scoreFlow.value = gameScore
         viewModelScope.launch {
-            gameInteractor = GameInteractor(Dispatchers.IO, taskRepository, gameRepository)
-            gameInteractor.initInteractor(player).start()
+            gameInteractor.start()
                 .collect {
                     when(it) {
                         is InteractorEventError -> eventsToShowFlow.emit(EventsToShow.ERROR to it.error.description)

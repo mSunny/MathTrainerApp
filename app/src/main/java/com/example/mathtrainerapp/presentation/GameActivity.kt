@@ -10,29 +10,25 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.mathtrainerapp.R
-import com.example.mathtrainerapp.appComponent
 import com.example.mathtrainerapp.data.GameParameters
 import com.example.mathtrainerapp.databinding.ActivityGameBinding
 import com.example.mathtrainerapp.domain.entities.Task
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import kotlin.random.Random
 
 class GameActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityGameBinding
-    private val gameViewModel: GameViewModel by viewModels{
-        factory.create(playerId ?: "")
+    private lateinit var playerId: String
+    val gameViewModel: GameViewModel by viewModels {
+        GameViewModelFactory(playerId, this.application)
     }
-    private var playerId: String? = null
-
-    @Inject
-    lateinit var factory: GameViewModelFactory.Factory
 
     @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        appComponent.injectGameActivity(this)
+        playerId = ""
         initViews()
         initEventProcessing()
     }
@@ -40,7 +36,7 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
     @ExperimentalCoroutinesApi
     override fun onStart() {
         super.onStart()
-        startGame()
+        restoreGame()
     }
 
     override fun onStop() {
@@ -123,11 +119,16 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     @ExperimentalCoroutinesApi
-    fun startGame() {
+    fun restoreGame() {
         when(gameViewModel.gameState) {
             GameViewModel.GameViewSTate.GAME_STARTED, GameViewModel.GameViewSTate.GAME_NOT_STARTED -> gameViewModel.startOrResume()
             GameViewModel.GameViewSTate.GAME_FINISHED -> signalGameFinished(gameViewModel.gameScore)
         }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun startGame() {
+        gameViewModel.startGame()
     }
 
     private fun initViews() {
