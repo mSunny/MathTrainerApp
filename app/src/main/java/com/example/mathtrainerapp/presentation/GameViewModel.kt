@@ -14,14 +14,14 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class GameViewModel (playerId: String,
-                     private val taskRepository: TaskRepositoryInterface,
-                     private val gameRepository: GameRepositoryInterface): ViewModel() {
+class GameViewModel (playerId: String): ViewModel() {
     enum class EventsToShow {NONE, ROUND_LOST, ROUND_WON, WRONG_ANSWER, GAME_FINISHED, ERROR}
     enum class GameViewSTate {GAME_STARTED, GAME_FINISHED, GAME_NOT_STARTED}
 
     private var player: Player
+    @Inject
     lateinit var gameInteractor: GameInteractor
     var gameState = GameViewSTate.GAME_NOT_STARTED
     var gameScore = 0
@@ -52,7 +52,6 @@ class GameViewModel (playerId: String,
         gameScore = 0
         scoreFlow.value = gameScore
         viewModelScope.launch {
-            gameInteractor = GameInteractor(Dispatchers.IO, taskRepository, gameRepository)
             gameInteractor.initInteractor(player).start()
                 .collect {
                     when(it) {

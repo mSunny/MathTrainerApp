@@ -5,7 +5,7 @@ import dagger.Component
 import javax.inject.Scope
 
 @GameScope
-@Component(modules = [DataModule::class, DispatchersModule::class])
+@Component(modules = [DataModule::class, DispatchersModule::class, CreatorsModule::class])
 interface GameComponent {
     fun injectGameViewModel(gameViewModel: GameViewModel)
 }

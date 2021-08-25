@@ -1,7 +1,5 @@
 package com.example.mathtrainerapp.domain.interactors
 
-import com.example.mathtrainerapp.dagger.DaggerGameInteractorComponent
-import com.example.mathtrainerapp.dagger.GameInteractorComponent
 import com.example.mathtrainerapp.data.GameParameters
 import com.example.mathtrainerapp.domain.boundaries.GameRepositoryInterface
 import com.example.mathtrainerapp.domain.boundaries.TaskRepositoryInterface
@@ -32,20 +30,12 @@ class GameInteractorOnRoundFinished(val isWon: Boolean, val scoreAdded: Int): In
 class GameInteractorOnWrongAnswer(): InteractorEvent()
 class GameInteractorOnGameFinished(val score: Int): InteractorEvent()
 
-class GameInteractor (private var dispatcher: CoroutineDispatcher,
+class GameInteractor @Inject constructor (private var dispatcher: CoroutineDispatcher,
                       private val taskRepository: TaskRepositoryInterface,
                       private val gameRepository: GameRepositoryInterface): Interactor() {
-    var gameInteractorComponent: GameInteractorComponent
-        private set
-
     @Inject
     lateinit var gameProcessor: GameProcessor
     lateinit var player: Player
-
-    init {
-        gameInteractorComponent = DaggerGameInteractorComponent.create()
-        gameInteractorComponent.injectGameInteractor(this)
-    }
 
     fun initInteractor(player: Player): GameInteractor {
         this.player = player
