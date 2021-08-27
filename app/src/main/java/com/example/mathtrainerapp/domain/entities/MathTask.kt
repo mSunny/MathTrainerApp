@@ -1,4 +1,3 @@
-
 package com.example.mathtrainerapp.domain.entities
 
 import java.lang.IllegalArgumentException
@@ -23,14 +22,10 @@ class MathTask(val operands: List<Int>, val operators: List<Operator>): Task() {
         for(index in operators.indices) {
             val next = operands[index + 1]
             res = when(operators[index]){
-                Operator.PLUS ->
-                    "$res+"
-                Operator.MINUS ->
-                    "$res-"
-                Operator.DIVIDE ->
-                    "$res/"
-                Operator.MULTIPLY ->
-                    "$res*"
+                Operator.PLUS -> "$res+"
+                Operator.MINUS -> "$res-"
+                Operator.DIVIDE -> "$res/"
+                Operator.MULTIPLY -> "$res*"
             }
             res += next
         }
@@ -73,14 +68,10 @@ class MathTask(val operands: List<Int>, val operators: List<Operator>): Task() {
             for (index in operators.indices) {
                 val next = operands[index + 1]
                 res = when (operators[index]) {
-                    Operator.PLUS ->
-                        res + next
-                    Operator.MINUS ->
-                        res - next
-                    Operator.DIVIDE ->
-                        res / next
-                    Operator.MULTIPLY ->
-                        res * next
+                    Operator.PLUS -> res + next
+                    Operator.MINUS -> res - next
+                    Operator.DIVIDE -> res / next
+                    Operator.MULTIPLY -> res * next
                 }
             }
             return res
@@ -98,9 +89,7 @@ class MathTask(val operands: List<Int>, val operators: List<Operator>): Task() {
                 Operator.PLUS -> getOperand(minOperand, maxOperand)
                 Operator.MULTIPLY -> getOperand(minOperand, maxOperand)
                 Operator.MINUS -> getOperand(minOperand, firstOperand)
-                Operator.DIVIDE -> {
-                    firstOperand.getRandomDivider(minOperand, maxOperand)
-                }
+                Operator.DIVIDE -> firstOperand.getRandomDivider(minOperand, maxOperand)
             }
         }
 

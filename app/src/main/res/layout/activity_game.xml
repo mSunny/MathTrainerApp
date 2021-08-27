@@ -4,7 +4,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
-android:background="@color/colorPrimary"
+android:background="@color/primary"
 tools:context=".presentation.GameActivity">
 
 <ImageButton
@@ -22,7 +22,7 @@ tools:context=".presentation.GameActivity">
     android:layout_height="wrap_content"
     android:text="@string/score"
     android:textSize="@dimen/medium_text_size"
-    android:textColor="@color/colorAccent"
+    android:textColor="@color/accent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     tools:text="1000"/>
@@ -30,7 +30,7 @@ tools:context=".presentation.GameActivity">
 <ImageView
     android:id="@+id/imageViewAvatar"
     style="@style/AvatarImageView"
-    android:layout_margin="16dp"
+    android:layout_margin="@dimen/base_margin"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintHorizontal_bias="0.5"
     app:layout_constraintStart_toStartOf="parent"
@@ -47,13 +47,13 @@ tools:context=".presentation.GameActivity">
     app:layout_constraintHorizontal_bias="0.5"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/imageViewAvatar"
-    android:textColor="@color/colorAccent"
+    android:textColor="@color/accent"
     tools:text="Миша"/>
 
 <ProgressBar
     android:id="@+id/progressBarTime"
     style="?android:attr/progressBarStyleHorizontal"
-    android:layout_margin="16dp"
+    android:layout_margin="@dimen/base_margin"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:layout_constraintEnd_toEndOf="parent"
@@ -67,28 +67,28 @@ tools:context=".presentation.GameActivity">
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:textSize="@dimen/big_text_size"
-    android:layout_marginTop="16dp"
+    android:layout_marginTop="@dimen/base_margin"
     app:layout_constraintTop_toBottomOf="@id/progressBarTime"
     app:layout_constraintBottom_toTopOf="@id/editTextAnswer"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintHorizontal_bias="0.5"
     app:layout_constraintStart_toStartOf="parent"
-    android:textColor="@color/colorAccent"
+    android:textColor="@color/accent"
     tools:text="2+2" />
 
 <EditText
     android:id="@+id/editTextAnswer"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:ems="10"
+    android:ems="@integer/ems_value"
     android:textSize="@dimen/medium_text_size"
     android:inputType="number"
-    android:textColor="@color/colorAccent"
+    android:textColor="@color/accent"
     android:textAlignment="center"
     android:gravity="center_horizontal"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:backgroundTint="@color/colorAccent"
+    android:layout_marginStart="@dimen/base_margin"
+    android:layout_marginEnd="@dimen/base_margin"
+    android:backgroundTint="@color/accent"
     app:layout_constraintBottom_toTopOf="@+id/keyboard"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintHorizontal_bias="0.5"
@@ -107,11 +107,12 @@ tools:context=".presentation.GameActivity">
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="@+id/editTextAnswer"
     app:layout_constraintBottom_toBottomOf="@+id/editTextAnswer"
-    android:layout_marginTop="-20dp"
-    android:layout_marginBottom="-20dp"
+    android:layout_marginTop="@dimen/negative_anim_margin"
+    android:layout_marginBottom="@dimen/negative_anim_margin"
     android:src="@drawable/win"
     android:visibility="invisible"
     android:contentDescription="@string/empty"/>
+
 <include
     android:id="@+id/keyboard"
     layout="@layout/layout_keyboard"

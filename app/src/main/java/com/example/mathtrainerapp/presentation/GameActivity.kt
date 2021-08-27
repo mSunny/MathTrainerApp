@@ -10,93 +10,32 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.mathtrainerapp.R
-import com.example.mathtrainerapp.appComponent
 import com.example.mathtrainerapp.data.GameParameters
 import com.example.mathtrainerapp.databinding.ActivityGameBinding
 import com.example.mathtrainerapp.domain.entities.Task
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class GameActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityGameBinding
-    private val gameViewModel: GameViewModel by viewModels{
-        factory.create(playerId ?: "")
+    private lateinit var playerId: String
+    val gameViewModel: GameViewModel by viewModels {
+        GameViewModelFactory(playerId, this.application)
     }
-    private var playerId: String? = null
-
-    @Inject
-    lateinit var factory: GameViewModelFactory.Factory
 
     @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityGameBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
-        appComponent.injectGameActivity(this)
-
-        arrayOf (binding.keyboard.imageButton0,
-            binding.keyboard.imageButton1,
-            binding.keyboard.imageButton2,
-            binding.keyboard.imageButton3,
-            binding.keyboard.imageButton4,
-            binding.keyboard.imageButton5,
-            binding.keyboard.imageButton6,
-            binding.keyboard.imageButton7,
-            binding.keyboard.imageButton8,
-            binding.keyboard.imageButton9,
-            binding.keyboard.imageButton0,
-            binding.keyboard.imageButtonDel)
-            .map { imageButton -> imageButton.setOnClickListener(this) }
-
-        binding.progressBarTime.max = (GameParameters.DEFAULT_ROUND_DURATION_IN_STEPS * GameParameters.DEFAULT_TIMER_STEP_MS).toInt()
-
-        runInLifecycleScope {
-            gameViewModel.timerValueFlow.collect {
-                updateTimerValue(it)
-            }
-        }
-
-        runInLifecycleScope {
-            gameViewModel.taskFlow.collect{
-                clearAnswer()
-                if (it != null) updateTask(it)
-            }
-        }
-
-        runInLifecycleScope {
-            gameViewModel.scoreFlow.collect{
-                updateScore(it)
-            }
-        }
-
-        runInLifecycleScope {
-            gameViewModel.eventsToShowFlow.collect {
-                when(it.first) {
-                    GameViewModel.EventsToShow.NONE -> { }
-                    GameViewModel.EventsToShow.ROUND_LOST -> signalRoundLost()
-                    GameViewModel.EventsToShow.ROUND_WON -> signalRoundWon()
-                    GameViewModel.EventsToShow.WRONG_ANSWER -> signalWrongAnswer()
-                    GameViewModel.EventsToShow.GAME_FINISHED -> {
-                        val score = it.second as? Int ?: 0
-                        signalGameFinished(score)
-                        clearAnswer()
-                        clearTask()
-                    }
-                    GameViewModel.EventsToShow.ERROR -> {
-                        showError(it.second.toString())
-                    }
-                }
-            }
-        }
+        playerId = ""
+        initViews()
+        initEventProcessing()
     }
 
     @ExperimentalCoroutinesApi
     override fun onStart() {
         super.onStart()
-        startGame()
+        restoreGame()
     }
 
     override fun onStop() {
@@ -157,16 +96,16 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
 
     @ExperimentalCoroutinesApi
     fun signalGameFinished(score: Int) {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(R.string.game_over)
-        builder.setMessage(getString(R.string.final_score, score))
-        builder.setCancelable(false)
-        builder.setPositiveButton(R.string.play_again){_, _ -> startGame()}
-        builder.setNegativeButton(R.string.end_game){ _, _ -> finish()}
-        val dialog = builder.create()
+        val dialog = AlertDialog.Builder(this)
+            .setTitle(R.string.game_over)
+            .setMessage(getString(R.string.final_score, score))
+            .setCancelable(false)
+            .setPositiveButton(R.string.play_again){_, _ -> startGame()}
+            .setNegativeButton(R.string.end_game){ _, _ -> finish()}
+            .create()
         dialog.show()
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.colorPrimary))
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.colorPrimary))
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(resources.getColor(R.color.primary))
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(resources.getColor(R.color.primary))
     }
 
     fun clearTask() {
@@ -179,8 +118,80 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     @ExperimentalCoroutinesApi
+    fun restoreGame() {
+        when(gameViewModel.gameState) {
+            GameViewModel.GameViewSTate.GAME_STARTED, GameViewModel.GameViewSTate.GAME_NOT_STARTED -> gameViewModel.startOrResume()
+            GameViewModel.GameViewSTate.GAME_FINISHED -> signalGameFinished(gameViewModel.gameScore)
+        }
+    }
+
+    @ExperimentalCoroutinesApi
     fun startGame() {
-        gameViewModel.startOrResume()
+        gameViewModel.startGame()
+    }
+
+    private fun initViews() {
+        binding = ActivityGameBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
+        arrayOf (binding.keyboard.imageButton0,
+            binding.keyboard.imageButton1,
+            binding.keyboard.imageButton2,
+            binding.keyboard.imageButton3,
+            binding.keyboard.imageButton4,
+            binding.keyboard.imageButton5,
+            binding.keyboard.imageButton6,
+            binding.keyboard.imageButton7,
+            binding.keyboard.imageButton8,
+            binding.keyboard.imageButton9,
+            binding.keyboard.imageButton0,
+            binding.keyboard.imageButtonDel)
+            .map { imageButton -> imageButton.setOnClickListener(this) }
+
+        binding.progressBarTime.max = (GameParameters.DEFAULT_ROUND_DURATION_IN_STEPS * GameParameters.DEFAULT_TIMER_STEP_MS).toInt()
+    }
+
+    @ExperimentalCoroutinesApi
+    private fun initEventProcessing() {
+        runInLifecycleScope {
+            gameViewModel.timerValueFlow.collect {
+                updateTimerValue(it)
+            }
+        }
+
+        runInLifecycleScope {
+            gameViewModel.taskFlow.collect{
+                clearAnswer()
+                if (it != null) updateTask(it)
+            }
+        }
+
+        runInLifecycleScope {
+            gameViewModel.scoreFlow.collect{
+                updateScore(it)
+            }
+        }
+
+        runInLifecycleScope {
+            gameViewModel.eventsToShowFlow.collect {
+                when(it.first) {
+                    GameViewModel.EventsToShow.NONE -> { }
+                    GameViewModel.EventsToShow.ROUND_LOST -> signalRoundLost()
+                    GameViewModel.EventsToShow.ROUND_WON -> signalRoundWon()
+                    GameViewModel.EventsToShow.WRONG_ANSWER -> signalWrongAnswer()
+                    GameViewModel.EventsToShow.GAME_FINISHED -> {
+                        val score = it.second as? Int ?: 0
+                        signalGameFinished(score)
+                        clearAnswer()
+                        clearTask()
+                    }
+                    GameViewModel.EventsToShow.ERROR -> {
+                        showError(it.second.toString())
+                    }
+                }
+            }
+        }
     }
 
     private fun runInLifecycleScope(action: suspend ()->Unit) {
