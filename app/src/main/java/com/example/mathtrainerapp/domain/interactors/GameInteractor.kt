@@ -1,5 +1,6 @@
 package com.example.mathtrainerapp.domain.interactors
 
+import com.example.mathtrainerapp.dagger.IoDispatcher
 import com.example.mathtrainerapp.data.GameParameters
 import com.example.mathtrainerapp.domain.boundaries.GameRepositoryInterface
 import com.example.mathtrainerapp.domain.boundaries.TaskRepositoryInterface
@@ -30,10 +31,10 @@ class GameInteractorOnRoundFinished(val isWon: Boolean, val scoreAdded: Int): In
 class GameInteractorOnWrongAnswer(): InteractorEvent()
 class GameInteractorOnGameFinished(val score: Int): InteractorEvent()
 
-class GameInteractor @Inject constructor(private var dispatcher: CoroutineDispatcher,
-                      private val taskRepository: TaskRepositoryInterface,
-                      private val gameRepository: GameRepositoryInterface,
-                        private val player: Player): Interactor() {
+class GameInteractor @Inject constructor(@IoDispatcher private var dispatcher: CoroutineDispatcher,
+                                         private val taskRepository: TaskRepositoryInterface,
+                                         private val gameRepository: GameRepositoryInterface,
+                                         private val player: Player): Interactor() {
     @Inject
     lateinit var gameProcessor: GameProcessor
 
