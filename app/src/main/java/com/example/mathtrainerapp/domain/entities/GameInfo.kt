@@ -1,6 +1,6 @@
 package com.example.mathtrainerapp.domain.entities
 
-import java.util.*
+import java.util.Date
 
 class GameInfo(val player: Player) {
     val id: Int? = null

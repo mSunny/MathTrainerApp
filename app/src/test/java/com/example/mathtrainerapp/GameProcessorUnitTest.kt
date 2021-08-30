@@ -9,7 +9,7 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 
 
-class GameUnitTest {
+class GameProcessorUnitTest {
     private var testRoundListener: RoundListener? = null
     private val testRound: Round = Mockito.mock(Round::class.java)
     @Suppress("UNUSED_PARAMETER")
@@ -35,9 +35,11 @@ class GameUnitTest {
         val taskDescription = RandomMathTaskDescription (Array(1){Operation(Operator.PLUS, 1, 5)}, 1)
         val task = MathTask.getRandomMathTask(taskDescription)
         val tasks = List(5){task}
-        val game = Game(gameDescription, gameListener, tasks, ::roundCreator, ::timerCreator)
-
-        game.startGame()
+        val gameProcessor = GameProcessor()
+        val game = Game(gameDescription, tasks)
+        gameProcessor.roundCreator = ::roundCreator
+        gameProcessor.timerCreator = ::timerCreator
+        gameProcessor.startNewGame(game, gameListener)
 
         testRoundListener?.onStepsLeftUpdate(3)
         testRoundListener?.onRoundFinished(false, 0)
@@ -57,9 +59,11 @@ class GameUnitTest {
         val gameListener = Mockito.mock(GameListener::class.java)
         val task = MathTask(listOf(1,1), listOf(Operator.PLUS))
         val tasks = List(5){task}
-        val game = Game(gameDescription, gameListener, tasks, ::roundCreator, ::timerCreator)
-
-        game.startGame()
+        val gameProcessor = GameProcessor()
+        gameProcessor.roundCreator = ::roundCreator
+        gameProcessor.timerCreator = ::timerCreator
+        val game = Game(gameDescription, tasks)
+        gameProcessor.startNewGame(game, gameListener)
 
         testRoundListener?.onStepsLeftUpdate(3)
         testRoundListener?.onRoundFinished(true, 10)
@@ -80,9 +84,11 @@ class GameUnitTest {
         val gameListener = Mockito.mock(GameListener::class.java)
         val task = MathTask(listOf(1,1), listOf(Operator.PLUS))
         val tasks = List(5){task}
-        val game = Game(gameDescription, gameListener, tasks, ::roundCreator, ::timerCreator)
-
-        game.startGame()
+        val gameProcessor = GameProcessor()
+        gameProcessor.roundCreator = ::roundCreator
+        gameProcessor.timerCreator = ::timerCreator
+        val game = Game(gameDescription, tasks)
+        gameProcessor.startNewGame(game, gameListener)
 
         testRoundListener?.onStepsLeftUpdate(3)
         testRoundListener?.onRoundFinished(true, 0)
@@ -107,11 +113,13 @@ class GameUnitTest {
         val gameListener = Mockito.mock(GameListener::class.java)
         val task = MathTask(listOf(1,1), listOf(Operator.PLUS))
         val tasks = List(5){task}
-        val game = Game(gameDescription, gameListener, tasks, ::roundCreator, ::timerCreator)
-
-        game.startGame()
-        game.tryAnswer("5")
-        game.tryAnswer("000")
+        val gameProcessor = GameProcessor()
+        gameProcessor.roundCreator = ::roundCreator
+        gameProcessor.timerCreator = ::timerCreator
+        val game = Game(gameDescription, tasks)
+        gameProcessor.startNewGame(game, gameListener)
+        gameProcessor.tryAnswer("5")
+        gameProcessor.tryAnswer("000")
 
         testRoundListener?.onStepsLeftUpdate(3)
         testRoundListener?.onRoundFinished(true, 0)
@@ -139,9 +147,11 @@ class GameUnitTest {
         val taskDescription = RandomMathTaskDescription (Array(1){Operation(Operator.PLUS, 1, 5)}, 1)
         val task = MathTask.getRandomMathTask(taskDescription)
         val tasks = List(5){task}
-        val game = Game(gameDescription, gameListener, tasks, ::roundCreator, ::timerCreator)
-
-        game.startGame()
+        val gameProcessor = GameProcessor()
+        gameProcessor.roundCreator = ::roundCreator
+        gameProcessor.timerCreator = ::timerCreator
+        val game = Game(gameDescription, tasks)
+        gameProcessor.startNewGame(game, gameListener)
 
         testRoundListener?.onStepsLeftUpdate(3)
         testRoundListener?.onRoundFinished(false, 0)
@@ -150,7 +160,7 @@ class GameUnitTest {
         testRoundListener?.onRoundFinished(false, 0)
         testRoundListener?.onRoundFinished(false, 0)
 
-        game.stop()
+        gameProcessor.stop()
 
         verify(gameListener, times(1)).onTimeLeftUpdate(any())
         verify(gameListener, times(5)).onRoundFinished(false, 0)
@@ -164,16 +174,18 @@ class GameUnitTest {
         val taskDescription = RandomMathTaskDescription (Array(1){Operation(Operator.PLUS, 1, 5)}, 1)
         val task = MathTask.getRandomMathTask(taskDescription)
         val tasks = List(5){task}
-        val game = Game(gameDescription, gameListener, tasks, ::roundCreator, ::timerCreator)
-
-        game.startGame()
+        val gameProcessor = GameProcessor()
+        gameProcessor.roundCreator = ::roundCreator
+        gameProcessor.timerCreator = ::timerCreator
+        val game = Game(gameDescription, tasks)
+        gameProcessor.startNewGame(game, gameListener)
 
         testRoundListener?.onStepsLeftUpdate(3)
         testRoundListener?.onRoundFinished(false, 0)
         testRoundListener?.onRoundFinished(false, 0)
         testRoundListener?.onRoundFinished(false, 0)
 
-        game.stop()
+        gameProcessor.stop()
 
         verify(gameListener, times(1)).onTimeLeftUpdate(any())
         verify(gameListener, times(3)).onRoundFinished(false, 0)
@@ -187,21 +199,23 @@ class GameUnitTest {
         val taskDescription = RandomMathTaskDescription (Array(1){Operation(Operator.PLUS, 1, 5)}, 1)
         val task = MathTask.getRandomMathTask(taskDescription)
         val tasks = List(5){task}
-        val game = Game(gameDescription, gameListener, tasks, ::roundCreator, ::timerCreator)
-
-        game.startGame()
+        val gameProcessor = GameProcessor()
+        gameProcessor.roundCreator = ::roundCreator
+        gameProcessor.timerCreator = ::timerCreator
+        val game = Game(gameDescription, tasks)
+        gameProcessor.startNewGame(game, gameListener)
 
         testRoundListener?.onStepsLeftUpdate(3)
         testRoundListener?.onRoundFinished(false, 0)
         testRoundListener?.onRoundFinished(false, 0)
         testRoundListener?.onRoundFinished(false, 0)
 
-        game.pause()
+        gameProcessor.pause()
 
         verify(gameListener, times(1)).onTimeLeftUpdate(any())
         verify(gameListener, times(3)).onRoundFinished(false, 0)
 
-        game.resume()
+        gameProcessor.resume()
 
         testRoundListener?.onRoundFinished(false, 0)
         testRoundListener?.onRoundFinished(false, 0)

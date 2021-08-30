@@ -6,4 +6,7 @@
     <dimen name="big_text_size">40sp</dimen>
     <dimen name="medium_text_size">30sp</dimen>
     <dimen name="small_text_size">18sp</dimen>
+
+    <dimen name="base_margin">16dp</dimen>
+    <dimen name="negative_anim_margin">-20dp</dimen>
 </resources>
