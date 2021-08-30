@@ -76,8 +76,8 @@ class GameProcessor @Inject constructor(): RoundListener {
 
     private fun finishGame() {
         if (game.state != Game.GameState.FINISHED) {
-            gameListener.onGameFinished(game.score)
             game.state = Game.GameState.FINISHED
+            gameListener.onGameFinished(game.score)
         }
     }
 }

@@ -3,22 +3,44 @@ package com.example.mathtrainerapp
 import com.example.mathtrainerapp.data.GameParameters
 import com.example.mathtrainerapp.domain.boundaries.GameRepositoryInterface
 import com.example.mathtrainerapp.domain.boundaries.TaskRepositoryInterface
-import com.example.mathtrainerapp.domain.entities.MathTask
-import com.example.mathtrainerapp.domain.entities.Operator
-import com.example.mathtrainerapp.domain.entities.Player
+import com.example.mathtrainerapp.domain.entities.*
 import com.example.mathtrainerapp.domain.interactors.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.junit.Assert
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.spy
 import org.mockito.kotlin.verify
+import org.mockito.ArgumentCaptor
+
+
+
 
 class GameInteractorTest {
+    @ExperimentalCoroutinesApi
+    private val coroutineDispatcher = TestCoroutineDispatcher()
+
+    private fun roundCreator(
+        timer: RoundTimer,
+        roundDurationInSteps: Int,
+        roundMaxScore: Int,
+        task: Task,
+        listener: RoundListener
+    ): Round = Round(timer, roundDurationInSteps, roundMaxScore, task, listener)
+
+    private fun timerCreator(interval: Long): RoundTimer {
+        return RoundTimerImplementation(interval)
+    }
+
+    private val gameProcessor = GameProcessor()
+
 
     @ExperimentalCoroutinesApi
     @Test
@@ -27,11 +49,18 @@ class GameInteractorTest {
             val gameRepository = Mockito.mock(GameRepositoryInterface::class.java)
             val taskRepository = Mockito.mock(TaskRepositoryInterface::class.java)
             val player = Player("123", "", "")
-            val task = MathTask(listOf(1,1), listOf(Operator.PLUS))
-            val tasks = List(5){task}
-            val interactor = GameInteractor(player, taskRepository, gameRepository)
+            val task = MathTask(listOf(1, 1), listOf(Operator.PLUS))
+            val tasks = List(5) { task }
+            val interactor =
+                GameInteractor(coroutineDispatcher, taskRepository, gameRepository, player)
+            gameProcessor.roundCreator = ::roundCreator
+            gameProcessor.timerCreator = ::timerCreator
+            interactor.gameProcessor = gameProcessor
+
             Mockito.`when`(taskRepository.getTasks(any())).thenReturn(tasks)
-            val res = interactor.start().toList()
+            val res = mutableListOf<InteractorEvent>()
+
+            interactor.start().toList(res)
             verify(gameRepository).saveGameResult(eq("123"), any(), eq(0))
 
             Assert.assertEquals(5, res.filterIsInstance<GameInteractorOnRoundFinished>().count())
@@ -51,7 +80,10 @@ class GameInteractorTest {
             val player = Player("123", "", "")
             val task = MathTask(listOf(1, 1), listOf(Operator.PLUS))
             val tasks = List(5) { task }
-            val interactor = GameInteractor(player, taskRepository, gameRepository)
+            val interactor = GameInteractor(coroutineDispatcher, taskRepository, gameRepository, player)
+            gameProcessor.roundCreator = ::roundCreator
+            gameProcessor.timerCreator = ::timerCreator
+            interactor.gameProcessor = gameProcessor
             Mockito.`when`(taskRepository.getTasks(any())).thenReturn(tasks)
             val flow = interactor.start()
             val res = mutableListOf<InteractorEvent>()
@@ -86,7 +118,10 @@ class GameInteractorTest {
             val player = Player("123", "", "")
             val task = MathTask(listOf(1, 1), listOf(Operator.PLUS))
             val tasks = List(5) { task }
-            val interactor = GameInteractor(player, taskRepository, gameRepository)
+            val interactor = GameInteractor(Dispatchers.IO, taskRepository, gameRepository, player)
+            gameProcessor.roundCreator = ::roundCreator
+            gameProcessor.timerCreator = ::timerCreator
+            interactor.gameProcessor = gameProcessor
             Mockito.`when`(taskRepository.getTasks(any())).thenReturn(tasks)
             val flow = interactor.start()
             val res = mutableListOf<InteractorEvent>()
@@ -117,7 +152,10 @@ class GameInteractorTest {
             val player = Player("123", "", "")
             val task = MathTask(listOf(1, 1), listOf(Operator.PLUS))
             val tasks = List(5) { task }
-            val interactor = GameInteractor(player, taskRepository, gameRepository)
+            val interactor = GameInteractor(Dispatchers.IO, taskRepository, gameRepository, player)
+            gameProcessor.roundCreator = ::roundCreator
+            gameProcessor.timerCreator = ::timerCreator
+            interactor.gameProcessor = gameProcessor
             Mockito.`when`(taskRepository.getTasks(any())).thenReturn(tasks)
             val flow = interactor.start()
             val res = mutableListOf<InteractorEvent>()
